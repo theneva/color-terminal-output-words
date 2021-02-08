@@ -10,7 +10,7 @@ Install (dev) dependencies:
 
 ### Format & build
 
-`$ yarn build
+`$ yarn build`
 
 This creates `./dist/` and sticks the compiled code there.
 
