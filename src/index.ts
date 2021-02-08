@@ -2,12 +2,13 @@
 import * as crypto from 'crypto';
 import * as readline from 'readline';
 
+const resetPrefix = '\x1b[0m';
+
 const colorPrefixes = {
   black: '\x1b[30m',
   red: '\x1b[91m',
   gray: '\x1b[37m',
   green: '\x1b[92m',
-  // default: '\x1b[0m',
   yellow: '\x1b[93m',
   blue: '\x1b[94m',
   pink: '\x1b[95m',
@@ -47,12 +48,18 @@ function colorLine(line: string): string[] {
 
   for (const word of words) {
     // Don't bother generating a hash for whitespace
-    if (word.trim().length > 0) {
+    const shouldColorWord = word.trim().length > 0;
+    if (shouldColorWord) {
       const prefix = colorPrefix(word);
       outputs.push(prefix);
     }
 
     outputs.push(word);
+
+    // Reset color so we don't screw up terminal colors after exiting
+    if (shouldColorWord) {
+      outputs.push(resetPrefix);
+    }
   }
 
   return outputs;
