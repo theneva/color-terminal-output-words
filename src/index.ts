@@ -7,25 +7,38 @@ const colorPrefixes = {
   red: '\x1b[91m',
   gray: '\x1b[37m',
   green: '\x1b[92m',
-  default: '\x1b[0m',
+  // default: '\x1b[0m',
   yellow: '\x1b[93m',
   blue: '\x1b[94m',
   pink: '\x1b[95m',
-  cyan: '\x1b[96m',
+  // cyan: '\x1b[96m',
   white: '\x1b[97m',
   magenta: '\x1b[95m',
 } as const;
 
 const colorKeys = Object.keys(colorPrefixes);
 
+const colorIndexByWordHash = new Map<number, number>();
+
+function colorPrefixFromIndex(index: number) {
+  return colorPrefixes[colorKeys[index]];
+}
+
+let nextColorIndex = 0;
 function colorPrefix(word: string): string {
   const wordHash = parseInt(
     crypto.createHash('sha256').update(word).digest('hex'),
     16,
   );
-  const colorIndex = wordHash % colorKeys.length;
-  const colorKey = colorKeys[colorIndex];
-  return colorPrefixes[colorKey];
+
+  if (colorIndexByWordHash.has(wordHash)) {
+    return colorPrefixFromIndex(colorIndexByWordHash.get(wordHash));
+  }
+
+  const colorIndex = nextColorIndex;
+  nextColorIndex = (nextColorIndex + 1) % colorKeys.length;
+  colorIndexByWordHash.set(wordHash, colorIndex);
+  return colorPrefixFromIndex(colorIndex);
 }
 
 function colorLine(line: string): string[] {
