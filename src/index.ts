@@ -72,5 +72,9 @@ readline
     terminal: false,
   })
   .on('line', (line) => {
-    console.log(...colorLine(line));
+    const segments = colorLine(line);
+    for (const segment of segments) {
+      process.stdout.write(segment);
+    }
+    console.log();
   });
